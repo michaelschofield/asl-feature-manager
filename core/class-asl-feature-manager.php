@@ -100,6 +100,8 @@ class ASL_Feature_Manager {
 		$this->loader->add_action( 'init', $admin, 'create_the_feature_post_type' );
 		$this->loader->add_action( 'add_meta_boxes', $admin, 'add_feature_meta_boxes' );
 		$this->loader->add_action( 'save_post', $admin, 'save_feature_meta_boxes' );
+		$this->loader->add_action( 'init', $admin, 'enqueue_admin_scripts' );
+
 
 	}
 

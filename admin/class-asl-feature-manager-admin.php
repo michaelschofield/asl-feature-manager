@@ -8,6 +8,17 @@ class ASL_Feature_Manager_Admin {
 		$this->version = $version;
 	}
 
+	public function enqueue_admin_scripts() {
+
+		if ( is_admin() ) :
+
+			wp_register_script( 'asl-feature-manager-admin-script', plugins_url( 'asl-feature-manager/admin/scripts/asl-feature-manager-admin-scripts.js' ), array( 'jquery' ), '0.1', true );
+			wp_enqueue_script( 'asl-feature-manager-admin-script' );
+
+		endif;
+
+	}
+
 	/**
 	 * Create and register the asl-feature post type
 	 */
@@ -80,6 +91,8 @@ class ASL_Feature_Manager_Admin {
 
 
 		echo '<input type="url" name="asl_feature_link" id="asl_feature_link" value=" ' . $link . '" class="widefat" />';
+		echo '<input type="text" id="jquery-datepicker" name="asl_feature_publish_start_date" value="' . get_post_meta( $post->ID, 'asl_feature_publish_start_date', true ) . '">';
+
 	}
 
 	public function save_feature_meta_boxes( $post_id ) {
@@ -103,6 +116,11 @@ class ASL_Feature_Manager_Admin {
 		if ( isset( $_POST[ 'asl_feature_link' ] ) ) {
 			update_post_meta( $post_id, 'asl_feature_link', wp_kses( $_POST['asl_feature_link'] ) );
 		}
+
+		if ( isset( $_POST['asl_feature_publish_start_date'] ) ) {
+			update_post_meta( $post_id, 'asl_feature_publish_start_date', wp_kses( $_POST['asl_feature_publish_start_date'] ) );
+		}
+
 
 	}
 
