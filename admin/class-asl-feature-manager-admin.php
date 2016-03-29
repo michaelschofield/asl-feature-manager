@@ -12,7 +12,10 @@ class ASL_Feature_Manager_Admin {
 
 		if ( is_admin() ) :
 
+			wp_register_script( 'angular', 'https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js', array(), '1.5.3', true );
 			wp_register_script( 'asl-feature-manager-admin-script', plugins_url( 'asl-feature-manager/admin/scripts/asl-feature-manager-admin-scripts.js' ), array( 'jquery' ), '0.1', true );
+
+			wp_enqueue_script( 'angular' );
 			wp_enqueue_script( 'asl-feature-manager-admin-script' );
 
 		endif;
@@ -67,8 +70,6 @@ class ASL_Feature_Manager_Admin {
 			),*/
 			'hierarchical' => false,
 			'supports' => array(
-				'custom_fields',
-				'excerpt',
 				'thumbnail',
 				'title'
 			)
@@ -79,22 +80,74 @@ class ASL_Feature_Manager_Admin {
 	}
 
 	public function add_feature_meta_boxes() {
-		add_meta_box( 'asl-feature-link', __( 'Link' ), array(&$this, 'render_feature_link_callback'), 'asl-feature', 'normal', 'high' );
+		add_meta_box( 'asl-feature-options', __( 'Feature Manager' ), array(&$this, 'render_feature_options_callback'), 'asl-feature', 'normal', 'high' );
 	}
 
-	public function render_feature_link_callback( $post ) {
-
-		$values = get_post_custom( $post->ID );
-		$link = isset( $values[ 'asl_feature_link' ] ) ? esc_attr( $values['asl_feature_link'][0] ) : '';
+/**
+ * Render the meta box, the fields, and the live Preview
+ *
+ * @todo There's a better way to render this stuff.
+ */
+	public function render_feature_options_callback( $post ) {
 
 		wp_nonce_field( 'asl_feature_nonce', 'meta_box_nonce' );
 
+		echo '<section ng-app="test">
+			<div style="margin-bottom: 1em;">
+				<label for="asl_feature_title" style="display: block;">Change the <strong>Title</strong></label>
+				<input class="widefat" name="asl_feature_title" id="asl_feature_title" ng-model="title" ng-init="title=\'' . $post->post_title . '\'" type="text" \>
+			</div>
+			<div style="margin-bottom: 1em;">
+				<label for="asl_feature_excerpt" style="display: block;">Excerpt</label>
+				<textarea class="widefat" name="asl_feature_excerpt" id="asl_feature_excerpt" ng-model="excerpt" ng-init="excerpt=\'' . $post->post_excerpt . '\'">{{excerpt}}</textarea>
+			</div>
+			<div style="margin-bottom: 1em;">
+				<label for="asl_feature_link" style="display: block;">Link</label>
+				<input type="url" name="asl_feature_link" id="asl_feature_link" ng-model="link" ng-init="link=\'' . get_post_meta( $post->ID, 'asl_feature_link', true ) . '\'" required />
+		</div>';
 
-		echo '<input type="url" name="asl_feature_link" id="asl_feature_link" value=" ' . $link . '" class="widefat" />';
-		echo '<input type="text" id="jquery-datepicker" name="asl_feature_publish_start_date" value="' . get_post_meta( $post->ID, 'asl_feature_publish_start_date', true ) . '">';
+			echo '<div style="margin-bottom: 1em;">';
+				echo '<label for="asl_feature_publish_start_date" style="display: block;">Date Up</label>';
+				echo '<input class="datepicker" type="date" name="asl_feature_publish_start_date" value="' . get_post_meta( $post->ID, 'asl_feature_publish_start_date', true ) . '" required>';
+			echo '</div>';
+			echo '<div style="margin-bottom: 1em;">';
+				echo '<label for="asl_feature_publish_end_date" style="display: block;">Date Down</label>';
+				echo '<input class="datepicker" type="date" name="asl_feature_publish_end_date" value="' . get_post_meta( $post->ID, 'asl_feature_publish_end_date', true ) . '" required>';
+			echo '</div>';
+
+			echo
+			'<h3>Preview</h3>
+			<div style="width: 100%; background-color: #f5f5f5; padding: 3em 0;">
+				<article style="width: 400px; background-color: white; border: 1px solid #ddd; border-radius: 0; box-shadow: 0 2px 6px 0 rgba(51,51,51,0.1); overflow: hidden; padding: 1em; position: relative; margin: 0 auto;">
+	        <div class="card__media" style="margin-bottom: 1em; padding-bottom: 56.25%; overflow: hidden;">
+
+	          <a ng-href="#">
+	            <img ng-if="media" ng-src="{{media}}" style="left: 0; position: absolute; top: 0; vertical-align: bottom; width: 100%;"/>
+	            <img src="//placehold.it/500x281" alt="" ng-if="!media" style="left: 0; position: absolute; top: 0; vertical-align: bottom; width: 100%;"/>
+	          </a>
+
+	        </div>
+	        <header class="card__header">
+	          <a href="#" class="link link--undecorated _link-blue" style="text-decoration: none;">
+	            <h2 class="delta" style="font-size: 1.5rem; color: #313547; margin-bottom: 0.61875rem; overflow: hidden; text-overflow: ellipsis; padding: 0; white-space: nowrap; font-weight: normal; line-height: 1; font-family: \"Times New Roman\",Times,serif !important;"> {{title}} </h2>
+	          </a>
+	        </header>
+	        <section class="content no-margin" style="margin: 0 !important;">
+	          <p style="font-size: 1rem; margin: auto auto 1.41429rem; font-family: \"Times New Roman\",Times,serif !important;""> {{ excerpt }}</p>
+	        </section>
+	      </article>
+			</div>';
+
+
+		echo '</section>';
 
 	}
 
+/**
+ * Validate and save content.
+ *
+ * @param int the post ID
+ */
 	public function save_feature_meta_boxes( $post_id ) {
 
 		/**
@@ -111,7 +164,7 @@ class ASL_Feature_Manager_Admin {
 		if ( !current_user_can( 'edit_post' ) ) return;
 
 		/**
-		 *
+		 * Strip and update the post meta.
 		 */
 		if ( isset( $_POST[ 'asl_feature_link' ] ) ) {
 			update_post_meta( $post_id, 'asl_feature_link', wp_kses( $_POST['asl_feature_link'] ) );
@@ -121,6 +174,32 @@ class ASL_Feature_Manager_Admin {
 			update_post_meta( $post_id, 'asl_feature_publish_start_date', wp_kses( $_POST['asl_feature_publish_start_date'] ) );
 		}
 
+		if ( isset( $_POST['asl_feature_publish_end_date'] ) ) {
+			update_post_meta( $post_id, 'asl_feature_publish_end_date', wp_kses( $_POST['asl_feature_publish_end_date'] ) );
+		}
+
+		// To prevent an endless loop, you have to remove and reset the action
+		if ( isset( $_POST['asl_feature_excerpt'] ) ) {
+			remove_action( 'save_post', array(&$this, 'save_feature_meta_boxes') );
+			wp_update_post(
+				array(
+					'ID' => $post_id,
+					'post_excerpt' => wp_kses( $_POST['asl_feature_excerpt'] )
+				)
+			);
+			add_action( 'save_post', array(&$this, 'save_feature_meta_boxes') );
+		}
+
+		if ( isset( $_POST['asl_feature_title'] ) ) {
+			remove_action( 'save_post', array(&$this, 'save_feature_meta_boxes') );
+			wp_update_post(
+				array(
+					'ID' => $post_id,
+					'post_title' => wp_kses( $_POST['asl_feature_title'] )
+				)
+			);
+			add_action( 'save_post', array(&$this, 'save_feature_meta_boxes') );
+		}
 
 	}
 
