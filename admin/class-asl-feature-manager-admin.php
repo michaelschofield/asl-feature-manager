@@ -73,6 +73,7 @@ class ASL_Feature_Manager_Admin {
 			'hierarchical' => false,
 			'taxonomies' => array( 'library-audience' ),
 			'supports' => array(
+				'excerpt',
 				'thumbnail',
 				'title'
 			),
@@ -111,8 +112,12 @@ class ASL_Feature_Manager_Admin {
 				<textarea class="widefat" name="asl_feature_excerpt" id="asl_feature_excerpt" ng-model="excerpt" ng-init="excerpt=\'' . $post->post_excerpt . '\'">{{excerpt}}</textarea>
 			</div>
 			<div style="margin-bottom: 1em;">
+				<label for="asl_feature_media" style="display:block;">Media</label>
+				<input type="url" name="asl_feature_media" id="asl_feature_media" ng-model="media" ng-init="media=\'' . wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0] . '\'" />
+			</div>
+			<div style="margin-bottom: 1em;">
 				<label for="asl_feature_link" style="display: block;">Link</label>
-				<input type="url" name="asl_feature_link" id="asl_feature_link" ng-model="link" ng-init="link=\'' . get_post_meta( $post->ID, 'asl_feature_link', true ) . '\'" required />
+				<input class="widefat" type="url" name="asl_feature_link" id="asl_feature_link" ng-model="link" ng-init="link=\'' . get_post_meta( $post->ID, 'asl_feature_link', true ) . '\'" required />
 		</div>';
 
 			echo '<div style="margin-bottom: 1em;">';
@@ -186,6 +191,11 @@ class ASL_Feature_Manager_Admin {
 		if ( isset( $_POST['asl_feature_publish_end_date'] ) ) {
 			update_post_meta( $post_id, 'asl_feature_publish_end_date', wp_kses( $_POST['asl_feature_publish_end_date'] ) );
 		}
+
+		if ( isset( $_POST['asl_feature_media'] ) ) {
+			update_post_meta( $post_id, 'asl_feature_media', wp_kses( $_POST['asl_feature_media'] ) );
+		}
+
 
 		// To prevent an endless loop, you have to remove and reset the action
 		if ( isset( $_POST['asl_feature_excerpt'] ) ) {

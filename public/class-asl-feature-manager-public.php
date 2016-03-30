@@ -36,6 +36,12 @@ class ASL_Feature_Manager_Public {
 
 		 ));
 
+		 register_rest_field( 'asl-feature', 'asl_feature_media', array(
+
+			 'get_callback' => array(&$this, 'return_feature_metas_callback')
+
+		 ));
+
 
 	 }
 
