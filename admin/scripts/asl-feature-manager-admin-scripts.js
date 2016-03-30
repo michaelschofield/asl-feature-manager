@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module( 'test', []);
+angular.module( 'asl-feature-manager', []);
 
 (function($) {
     $('.datepicker').datepicker({

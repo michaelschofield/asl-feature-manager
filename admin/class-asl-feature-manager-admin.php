@@ -92,7 +92,7 @@ class ASL_Feature_Manager_Admin {
 
 		wp_nonce_field( 'asl_feature_nonce', 'meta_box_nonce' );
 
-		echo '<section ng-app="test">
+		echo '<section ng-app="asl-feature-manager">
 			<div style="margin-bottom: 1em;">
 				<label for="asl_feature_title" style="display: block;">Change the <strong>Title</strong></label>
 				<input class="widefat" name="asl_feature_title" id="asl_feature_title" ng-model="title" ng-init="title=\'' . $post->post_title . '\'" type="text" \>
