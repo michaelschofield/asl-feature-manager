@@ -24,6 +24,8 @@ class ASL_Feature_Manager_Admin {
 
 	/**
 	 * Create and register the asl-feature post type
+	 *
+	 * @todo Create the "Library Audience" taxonomy if it doesn't exist.
 	 */
 	public function create_the_feature_post_type() {
 
@@ -69,6 +71,7 @@ class ASL_Feature_Manager_Admin {
 			  'create_posts'       => 'edit_features',
 			),*/
 			'hierarchical' => false,
+			'taxonomies' => array( 'library-audience' ),
 			'supports' => array(
 				'thumbnail',
 				'title'
@@ -78,6 +81,7 @@ class ASL_Feature_Manager_Admin {
 		register_post_type( 'asl-feature', $args );
 
 	}
+
 
 	public function add_feature_meta_boxes() {
 		add_meta_box( 'asl-feature-options', __( 'Feature Manager' ), array(&$this, 'render_feature_options_callback'), 'asl-feature', 'normal', 'high' );
