@@ -8,44 +8,49 @@ class ASL_Feature_Manager_Public {
 		$this->version = $version;
 	}
 
-	/*public function enqueue_unique_styles() {
-		if (!is_admin()) {
-		    wp_register_style( 'asl-feature-manager-stylesheet', '//sherman.library.nova.edu/cdn/styles/css/public-global/s--apa.css', array( 'legacy-css' ), '1.1', 'all' );
-		    wp_enqueue_style( 'asl-feature-manager-stylesheet' );
-		}
-	}
+	/**
+	 * Expose a feature's meta fields to the WP REST API (v2)
+	 *
+	 * @param $post_type
+	 * @param $attribute: the name of the field.
+	 * @param $args: an array with keys that define the callback functions
+	 * @url http://v2.wp-api.org/extending/modifying/
+	 */
+	 public function expose_feature_meta_to_api() {
 
-	public function enqueue_unique_scripts() {
-		if (!is_admin()) {
-		    wp_register_script( 'asl-feature-manager-script', plugins_url( 'asl-feature-manager/public/scripts/asl-feature-manager-scripts.js' ), array( 'pls-js' ), '0.1', true );
-		    wp_enqueue_script( 'asl-feature-manager-script' );
+		 register_rest_field( 'asl-feature', 'asl_feature_link', array(
 
-		    wp_localize_script( 'asl-feature-manager-script', 'ASL_Feature_Manager_search', array(
-		    	'ajax_url' => admin_url( 'admin-ajax.php' )
-	    	));
-		}
-	}*/
+			 'get_callback' => array(&$this, 'return_feature_metas_callback')
 
-	/*public function replace_category_archive_template( $category ) {
+		 ));
 
-		if ( is_category() ) {
-			return plugin_dir_path( dirname( __FILE__ ) ) . 'public/templates/category.php';
-		}
+		 register_rest_field( 'asl-feature', 'asl_feature_publish_start_date', array(
 
-		return $category;
-	}*/
-	/*
-	public function create_single_formatting_view( $single ) {
-		global $wp_query, $post;
+			 'get_callback' => array(&$this, 'return_feature_metas_callback')
 
-		if ( $post->post_type =='formatting' ) {
+		 ));
 
-			return plugin_dir_path( dirname( __FILE__ ) ) . 'public/templates/single-formatting.php';
+		 register_rest_field( 'asl-feature', 'asl_feature_publish_end_date', array(
 
-		}
+			 'get_callback' => array(&$this, 'return_feature_metas_callback')
 
-		return $single;
-	}*/
+		 ));
+
+
+	 }
+
+	 /**
+	  * Get the value of the asl_feature_link field
+		*
+		* @param array $object Details of current post
+		* @param string $field_name name of field
+		* @param WP_REST_Request $request Current request
+		*
+		* @return mixed
+		*/
+	 public function return_feature_metas_callback( $object, $field_name, $request ) {
+		 return get_post_meta( $object[ 'id' ], $field_name, true );
+	 }
 
 }
 ?>

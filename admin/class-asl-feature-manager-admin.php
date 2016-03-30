@@ -75,7 +75,12 @@ class ASL_Feature_Manager_Admin {
 			'supports' => array(
 				'thumbnail',
 				'title'
-			)
+			),
+
+		 // Expose features through the WP REST API
+		 'show_in_rest' => true,
+		 'rest_base' => 'features-api',
+		 'rest_controller_class' => 'WP_REST_Posts_Controller'
 		);
 
 		register_post_type( 'asl-feature', $args );
