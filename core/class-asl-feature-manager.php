@@ -108,10 +108,7 @@ class ASL_Feature_Manager {
 	private function define_public_hooks() {
 		$public = new ASL_Feature_Manager_Public( $this->get_version() );
 		$this->loader->add_action( 'rest_api_init', $public, 'expose_feature_meta_to_api' );
-		//$this->loader->add_action( 'init', $public, 'do_something_enqueue' );
-		//$this->loader->add_action( 'wp_ajax_nopriv_ASL_Feature_Manager_search_fetch_results', $public, 'ASL_Feature_Manager_search_fetch_results' );
-		//$this->loader->add_action( 'wp_ajax_ASL_Feature_Manager_search_fetch_results', $public, 'ASL_Feature_Manager_search_fetch_results' );
-		//$this->loader->add_filter( 'category_template', $public, 'replace_category_archive_template' );
+		$this->loader->add_action( 'init', $public, 'expose_library_audience_taxonomy_to_api' );
 	}
 
 	public function run() {

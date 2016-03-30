@@ -42,7 +42,6 @@ class ASL_Feature_Manager_Public {
 
 		 ));
 
-
 	 }
 
 	 /**
@@ -58,5 +57,19 @@ class ASL_Feature_Manager_Public {
 		 return get_post_meta( $object[ 'id' ], $field_name, true );
 	 }
 
+	/**
+	 * Expose the library-audience taxonomy to the REST API
+	 */
+	public function expose_library_audience_taxonomy_to_api() {
+		global $wp_taxonomies;
+
+		$taxonomy_name = 'library-audience';
+
+		if ( isset( $wp_taxonomies[ $taxonomy_name ] ) ) {
+			$wp_taxonomies[ $taxonomy_name ]->show_in_rest = true;
+			$wp_taxonomies[ $taxonomy_name ]->rest_base = $taxonomy_name;
+			$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = 'WP_REST_Terms_Controller';
+		}
+	}
 }
 ?>
