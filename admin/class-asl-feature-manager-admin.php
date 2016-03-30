@@ -31,7 +31,7 @@ class ASL_Feature_Manager_Admin {
 
 		$labels = array(
 
-			'name' => __('Ads' ),
+			'name' => __('Ad Manager' ),
 			'singular_name' => __('Ad' ),
 			'all_items' => __('All Ads' ),
 			'add_new' => __('Add New Ad' ),
@@ -57,8 +57,8 @@ class ASL_Feature_Manager_Admin {
 				'show_in_nav_menus' => false,
 			'query_var' => true,
 			'menu_position' => 5,
-			'rewrite'	=> array( 'slug' => 'feature', 'with_front' => false ), /* you can specify it's url slug */
-			'has_archive' => 'events', /* you can rename the slug here */
+			'rewrite'	=> array( 'slug' => 'ad', 'with_front' => false ), /* you can specify it's url slug */
+			'has_archive' => 'ads', /* you can rename the slug here */
 			'capability_type' => 'admin',
 			/*'capabilities' => array(
 			  'edit_post'          => 'edit_feature',
