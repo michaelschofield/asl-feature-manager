@@ -71,5 +71,76 @@ class ASL_Feature_Manager_Public {
 			$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = 'WP_REST_Terms_Controller';
 		}
 	}
+
+	public function create_feature_api_endpoint( WP_REST_Request $request ) {
+
+		$audience = $request['audience'];
+
+		if ( $audience == 'all' ) {
+			$audience = array( 'public', 'academic', 'kids', 'teens' );
+		}
+
+		$today = date( 'Y-m-d' );
+
+		$args = array(
+			'post_type' => 'asl-feature',
+			'meta_key' 	=> 'asl_feature_publish_end_date',
+			'meta_query' => array(
+
+				'relation' => 'AND',
+				array(
+					'key' => 'asl_feature_publish_end_date',
+					'value' => $today,
+					'compare' => '>='
+				),
+
+				array(
+					'key' => 'asl_feature_publish_start_date',
+					'value' => $today,
+					'compare' => '<='
+				)
+			),
+
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'library-audience',
+					'field' 	=> 'slug',
+					'terms' 	=> $audience
+				)
+			)
+		);
+
+		$posts = get_posts( $args );
+		$return = array();
+
+		foreach( $posts as $post ){
+			$return[] = array(
+
+				'title' => $post->post_title,
+				'publish' => get_post_meta( $post->ID, 'asl_feature_publish_start_date', true ),
+				'unpublish' => get_post_meta( $post->ID, 'asl_feature_publish_end_date', true ),
+				'excerpt' => $post->post_excerpt,
+				'link' => get_post_meta( $post->ID, 'asl_feature_link', true ),
+				'media' => get_post_meta( $post->ID, 'asl_feature_media', true )
+
+			);
+		}
+
+		if ( empty ( $posts ) ) {
+			return null;
+		}
+
+		$response = new WP_REST_Response( $return );
+		return $response;
+
+	}
+
+	public function create_feature_api_route() {
+		register_rest_route( 'test/v2', '/features', array(
+			'methods' => 'GET',
+			'callback' => array(&$this, 'create_feature_api_endpoint' )
+		));
+	}
+
 }
 ?>

@@ -108,6 +108,7 @@ class ASL_Feature_Manager {
 	private function define_public_hooks() {
 		$public = new ASL_Feature_Manager_Public( $this->get_version() );
 		$this->loader->add_action( 'rest_api_init', $public, 'expose_feature_meta_to_api' );
+		$this->loader->add_action( 'rest_api_init', $public, 'create_feature_api_route');
 		$this->loader->add_action( 'init', $public, 'expose_library_audience_taxonomy_to_api' );
 	}
 
