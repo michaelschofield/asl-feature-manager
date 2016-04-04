@@ -97,16 +97,22 @@ class ASL_Feature_Manager {
 
 		$admin = new ASL_Feature_Manager_Admin( $this->get_version() );
 
+		// Create and manage the "asl-feature" post type
 		$this->loader->add_action( 'init', $admin, 'create_the_feature_post_type' );
+		$this->loader->add_action( 'init', $admin, 'enqueue_admin_scripts' );
 		$this->loader->add_action( 'add_meta_boxes', $admin, 'add_feature_meta_boxes' );
 		$this->loader->add_action( 'save_post', $admin, 'save_feature_meta_boxes' );
-		$this->loader->add_action( 'init', $admin, 'enqueue_admin_scripts' );
 
+		// Create and manage custom "asl-feature" columns
+		$this->loader->add_filter( 'manage_edit-asl-feature_columns', $admin, 'create_custom_features_columns' );
+		$this->loader->add_filter( 'manage_asl-feature_posts_custom_column', $admin, 'manage_custom_feature_columns' );
+		$this->loader->add_filter( 'manage_edit-asl-feature_sortable_columns', $admin, 'make_feature_columns_sortable');
 
 	}
 
 	private function define_public_hooks() {
 		$public = new ASL_Feature_Manager_Public( $this->get_version() );
+
 		$this->loader->add_action( 'rest_api_init', $public, 'expose_feature_meta_to_api' );
 		$this->loader->add_action( 'rest_api_init', $public, 'create_feature_api_route');
 		$this->loader->add_action( 'init', $public, 'expose_library_audience_taxonomy_to_api' );

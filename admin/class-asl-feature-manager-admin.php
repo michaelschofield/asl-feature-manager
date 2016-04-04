@@ -222,4 +222,112 @@ class ASL_Feature_Manager_Admin {
 
 	}
 
+
+/**
+ * Create custom columns in the Ad Manager dashboard
+ */
+ 	public function create_custom_features_columns( $columns ) {
+
+		$columns = array(
+			'cb' => '<input type="checkbox" />',
+			'title' => __( 'Heading' ),
+			'copy' => __('Ad copy'),
+			'publish_date' => __( 'Publish Date' ),
+			'unpublish_date' => __( 'Unpublish Date' ),
+			'audience' => __('Audience'),
+		);
+
+		return $columns;
+
+	}
+
+/**
+ * Populate content in the custom columns
+ */
+	public function manage_custom_feature_columns( $column ) {
+
+		global $post;
+
+		switch( $column ) {
+
+			// Add the excerpt as the ad copy
+			case 'copy' :
+
+				if ( empty($post->post_excerpt) ) {
+					echo __( '' );
+				}
+
+				else {
+					echo $post->post_excerpt;
+				}
+			break;
+
+			// Fetch and format the publish start date meta field
+			case 'publish_date' :
+
+				$publish_date = get_post_meta( $post->ID, 'asl_feature_publish_start_date', true );
+				if ( empty( $publish_date ) ) {
+					echo __( '' );
+				}
+
+				else {
+					echo date( 'F j, Y', strtotime( $publish_date ) );
+				}
+
+			break;
+
+			// Fetch and format the publish end date meta field
+			case 'unpublish_date' :
+
+				$unpublish_date = get_post_meta( $post->ID, 'asl_feature_publish_end_date', true );
+				if ( empty( $unpublish_date ) ) {
+					echo __( '' );
+				}
+				else {
+					echo date( 'F j, Y', strtotime( $unpublish_date ) );
+				}
+
+			break;
+
+			// Fetch all the library-audiences ads are targeted to
+			case 'audience' :
+
+				$terms = get_the_terms( $post->ID, 'library-audience' );
+
+				if ( !empty( $terms ) ) {
+					$out = array();
+
+					foreach( $terms as $term ) {
+						$out[] = sprintf( '<a href="%s">%s</a>',
+							esc_url( add_query_arg( array( 'post_type' => $post->post_type, 'library-audience' => $term->slug ), 'edit.php' )),
+							esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, 'series', 'display' ) )
+						);
+					}
+
+					echo join( ', ', $out );
+				}
+
+				else {
+					echo __( 'No Audience' );
+				}
+			break;
+
+			default:
+			break;
+		}
+
+	}
+
+/**
+ * This makes the features sortable by publish and unpublish date.
+ */
+	public function make_feature_columns_sortable( $columns ) {
+
+		$columns = array(
+			'publish_date' => __( 'Publish Date'),
+			'unpublish_date' => __( 'Unpublish Date' )
+		);
+
+		return $columns;
+	}
 }

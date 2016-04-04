@@ -136,7 +136,7 @@ class ASL_Feature_Manager_Public {
 	}
 
 	public function create_feature_api_route() {
-		register_rest_route( 'test/v2', '/features', array(
+		register_rest_route( 'features/v2', '/ads', array(
 			'methods' => 'GET',
 			'callback' => array(&$this, 'create_feature_api_endpoint' )
 		));
