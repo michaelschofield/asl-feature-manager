@@ -129,6 +129,11 @@ class ASL_Feature_Manager_Admin {
 				echo '<input class="datepicker" type="date" name="asl_feature_publish_end_date" value="' . get_post_meta( $post->ID, 'asl_feature_publish_end_date', true ) . '" required>';
 			echo '</div>';
 
+			echo '<div style="margin-bottom: 1em;">
+				<label for="asl_feature_priority" style="display: block;">Priority</label>
+				<input name="asl_feature_priority" id="asl_feature_priority" value="' . ( get_post_meta( $post->ID, 'asl_feature_priority', true ) ? get_post_meta( $post->ID, 'asl_feature_priority', true ) : 5 ) . '" type="number" min="1" max="10" />
+			</div>';
+
 			echo
 			'<h3>Preview</h3>
 			<div style="width: 100%; background-color: #f5f5f5; padding: 3em 0;">
@@ -196,6 +201,9 @@ class ASL_Feature_Manager_Admin {
 			update_post_meta( $post_id, 'asl_feature_media', wp_kses( $_POST['asl_feature_media'] ) );
 		}
 
+		if ( isset( $_POST['asl_feature_priority'] ) ) {
+			update_post_meta( $post_id, 'asl_feature_priority',$_POST['asl_feature_priority'] );
+		}
 
 		// To prevent an endless loop, you have to remove and reset the action
 		if ( isset( $_POST['asl_feature_excerpt'] ) ) {
@@ -235,6 +243,7 @@ class ASL_Feature_Manager_Admin {
 			'publish_date' => __( 'Publish Date' ),
 			'unpublish_date' => __( 'Unpublish Date' ),
 			'audience' => __('Audience'),
+			'priority' => __( 'Priority' )
 		);
 
 		return $columns;
@@ -312,6 +321,16 @@ class ASL_Feature_Manager_Admin {
 				}
 			break;
 
+			case 'priority' :
+				$priority = get_post_meta( $post->ID, 'asl_feature_priority', true );
+				if ( empty( $priority ) ) {
+					echo __( '' );
+				}
+				else {
+					echo $priority;
+				}
+			break;
+
 			default:
 			break;
 		}
@@ -324,8 +343,10 @@ class ASL_Feature_Manager_Admin {
 	public function make_feature_columns_sortable( $columns ) {
 
 		$columns = array(
+
 			'publish_date' => __( 'Publish Date'),
-			'unpublish_date' => __( 'Unpublish Date' )
+			'unpublish_date' => __( 'Unpublish Date' ),
+			'priority' => __( 'Priority' )
 		);
 
 		return $columns;

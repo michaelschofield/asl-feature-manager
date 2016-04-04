@@ -84,7 +84,7 @@ class ASL_Feature_Manager_Public {
 
 		$args = array(
 			'post_type' => 'asl-feature',
-			'meta_key' 	=> 'asl_feature_publish_end_date',
+			'meta_key' 	=> 'asl_feature_priority',
 			'meta_query' => array(
 
 				'relation' => 'AND',
@@ -100,6 +100,9 @@ class ASL_Feature_Manager_Public {
 					'compare' => '<='
 				)
 			),
+
+			'order' 	=> 'ASC',
+			'orderby' => 'meta_value_num',
 
 			'tax_query' => array(
 				array(
@@ -121,7 +124,8 @@ class ASL_Feature_Manager_Public {
 				'unpublish' => get_post_meta( $post->ID, 'asl_feature_publish_end_date', true ),
 				'excerpt' => $post->post_excerpt,
 				'link' => get_post_meta( $post->ID, 'asl_feature_link', true ),
-				'media' => get_post_meta( $post->ID, 'asl_feature_media', true )
+				'media' => get_post_meta( $post->ID, 'asl_feature_media', true ),
+				'priority' => ( get_post_meta( $post->ID, 'asl_feature_priority', true ) ? get_post_meta( $post->ID, 'asl_feature_priority', true ) : '5' )
 
 			);
 		}
