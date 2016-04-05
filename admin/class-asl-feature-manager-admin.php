@@ -113,7 +113,7 @@ class ASL_Feature_Manager_Admin {
 			</div>
 			<div style="margin-bottom: 1em;">
 				<label for="asl_feature_media" style="display:block;">Media</label>
-				<input type="url" name="asl_feature_media" id="asl_feature_media" ng-model="media" ng-init="media=\'' . wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0] . '\'" />
+				<input type="url" name="asl_feature_media" id="asl_feature_media" ng-model="media" ng-init="media=\'' . ( get_post_meta( $post->ID, 'asl_feature_media', true ) ? get_post_meta( $post->ID, 'asl_feature_media', true ) : wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0] ) . '\'" />
 			</div>
 			<div style="margin-bottom: 1em;">
 				<label for="asl_feature_link" style="display: block;">Link</label>
