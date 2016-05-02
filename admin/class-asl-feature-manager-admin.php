@@ -51,7 +51,7 @@ class ASL_Feature_Manager_Admin {
 		$args = array(
 			'labels' => $labels,
 			'public' => true,
-				'publicly_queryable' => true,
+				'publicly_queryable' => false,
 				'exclude_from_search' => true,
 				'show_ui' => true,
 				'show_in_nav_menus' => false,
@@ -59,7 +59,7 @@ class ASL_Feature_Manager_Admin {
 			'menu_position' => 5,
 			'rewrite'	=> array( 'slug' => 'ad', 'with_front' => false ), /* you can specify it's url slug */
 			'has_archive' => 'ads', /* you can rename the slug here */
-			'capability_type' => 'admin',
+			'capability_type' => 'post',
 			/*'capabilities' => array(
 			  'edit_post'          => 'edit_feature',
 			  'read_post'          => 'read_feature',
